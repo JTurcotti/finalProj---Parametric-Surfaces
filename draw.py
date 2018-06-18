@@ -186,6 +186,23 @@ def add_torus( edges, cx, cy, cz, r0, r1, step ):
 
     add_parametric( edges, parametric, step )
 
+def add_cone( edges, cx, cy, cz, r, h, step ):
+    def para_base(t, u):
+        x = cx + r * t * math.cos(2 * math.pi * u)
+        y = cy
+        z = cz + r * t * math.sin(2 * math.pi * u)
+
+        return [x, y, z]
+
+    def para_lateral(t, u):
+        x = cx + r * u * math.cos(2 * math.pi * t)
+        y = cy + h * (1 - u)
+        z = cz + r * u * math.sin(2 * math.pi * t)
+
+        return [x, y, z]
+
+    add_parametric( edges, para_base, step )
+    add_parametric( edges, para_lateral, step )
 
 def add_circle( points, cx, cy, cz, r, step ):
     x0 = r + cx
