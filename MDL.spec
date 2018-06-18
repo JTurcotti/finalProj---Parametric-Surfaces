@@ -54,6 +54,11 @@ sphere [constants] x y z r [coord_system]
 
 torus [constants] x y z r0 r1  [coord_system]
 
+cone x y z r h
+
+coil x y z r0 r1 h n
+			- n = number of rotations
+
 box [constants] x0 y0 z0 h w d [coord_system]
 			- x0 y0 z0 = one corner of the box
 			- h w d = height width and depth

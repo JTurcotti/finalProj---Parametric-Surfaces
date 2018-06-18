@@ -204,6 +204,36 @@ def add_cone( edges, cx, cy, cz, r, h, step ):
     add_parametric( edges, para_base, step )
     add_parametric( edges, para_lateral, step )
 
+def add_coil( edges, cx, cy, cz, r0, r1, h, n, step ):
+
+    def para_bottom(t, u):
+        x = cx + r1 + t * r0 * math.cos(2 * math.pi * u)
+        y = cy + t * r0 * math.sin(2 * math.pi * u)
+        z = cz
+
+        return [x, y, z]
+
+    def para_top(t, u):
+        x = cx + r1 + u * r0 * math.cos(2 * math.pi * t)
+        y = cy + h + u * r0 * math.sin(2 * math.pi * t)
+        z = cz
+
+        return [x, y, z]
+    
+    def para_coil(t, u):
+        x = math.cos(2*math.pi * t * n) * (r0 * math.cos(2*math.pi * u) + r1) + cx;
+        y = r0 * math.sin(2*math.pi * u) + t * h + cy;
+        z = -1*math.sin(2*math.pi * t * n) * (r0 * math.cos(2*math.pi * u) + r1) + cz;
+
+        return [x, y, z]
+
+    add_parametric( edges, para_bottom, step )
+    add_parametric( edges, para_top, step )
+    add_parametric( edges, para_coil, step * int(n))
+
+        
+    
+
 def add_circle( points, cx, cy, cz, r, step ):
     x0 = r + cx
     y0 = cy

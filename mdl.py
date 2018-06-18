@@ -16,6 +16,7 @@ tokens = (
     "SPHERE",
     "BOX",
     "CONE",
+    "COIL",
     "LINE", 
     "MESH", 
     "TEXTURE", 
@@ -56,6 +57,7 @@ reserved = {
     "sphere" : "SPHERE",
     "box" : "BOX",
     "cone" : "CONE",
+    "coil" : "COIL",
     "line" : "LINE",
     "mesh" : "MESH",
     "texture" : "TEXTURE",
@@ -168,7 +170,12 @@ def p_command_cone(p):
     """command : CONE NUMBER NUMBER NUMBER NUMBER NUMBER"""
     cmd = {'op' : p[1], 'constants' : None, 'cs' : None, 'args' : p[2:7]}
     commands.append(cmd)
-    
+
+def p_command_coil(p):
+    """command : COIL NUMBER NUMBER NUMBER NUMBER NUMBER NUMBER NUMBER"""
+    cmd = {'op' : p[1], 'constants' : None, 'cs' : None, 'args' : p[2:9]}
+    commands.append(cmd)
+
 def p_command_sphere(p):
     """command : SPHERE NUMBER NUMBER NUMBER NUMBER
                | SPHERE SYMBOL NUMBER NUMBER NUMBER NUMBER
