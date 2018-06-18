@@ -66,7 +66,6 @@ def draw_polygons( matrix, screen, zbuffer, view, ambient, light, areflect, dref
 
         normal = calculate_normal(matrix, point)[:]
         if dot_product(normal, view) > 0:
-
             color = get_lighting(normal, view, ambient, light, areflect, dreflect, sreflect )
             scanline_convert(matrix, point, screen, zbuffer, color)
 
@@ -121,121 +120,72 @@ def add_box( polygons, x, y, z, width, height, depth ):
     add_polygon(polygons, x, y1, z, x1, y1, z1, x1, y1, z);
     add_polygon(polygons, x, y1, z, x, y1, z1, x1, y1, z1);
 
-def add_sphere( edges, cx, cy, cz, r, step ):
-    points = generate_sphere(cx, cy, cz, r, step)
-    lat_start = 0
-    lat_stop = step
-    longt_start = 0
-    longt_stop = step
+def generate_cone( cx, cy, cz, r, h, step ):
+    base_points = []
+    lat_points = []
 
-    step+= 1
-    for lat in range(lat_start, lat_stop):
-        for longt in range(longt_start, longt_stop):
-
-            p0 = lat * step + longt
-            p1 = p0+1
-            p2 = (p1+step) % (step * (step-1))
-            p3 = (p0+step) % (step * (step-1))
-
-            if longt != step - 2:
-                add_polygon( edges, points[p0][0],
-                             points[p0][1],
-                             points[p0][2],
-                             points[p1][0],
-                             points[p1][1],
-                             points[p1][2],
-                             points[p2][0],
-                             points[p2][1],
-                             points[p2][2])
-            if longt != 0:
-                add_polygon( edges, points[p0][0],
-                             points[p0][1],
-                             points[p0][2],
-                             points[p2][0],
-                             points[p2][1],
-                             points[p2][2],
-                             points[p3][0],
-                             points[p3][1],
-                             points[p3][2])
-
-def generate_sphere( cx, cy, cz, r, step ):
-    points = []
-
-    rot_start = 0
-    rot_stop = step
-    circ_start = 0
-    circ_stop = step
-
-    for rotation in range(rot_start, rot_stop):
+    for rotation in range(0, step):
         rot = rotation/float(step)
-        for circle in range(circ_start, circ_stop+1):
+        for cicle in range(0, step + 1):
             circ = circle/float(step)
 
-            x = r * math.cos(math.pi * circ) + cx
-            y = r * math.sin(math.pi * circ) * math.cos(2*math.pi * rot) + cy
-            z = r * math.sin(math.pi * circ) * math.sin(2*math.pi * rot) + cz
+            x = cx + r * circ * math.cos(2*math.pi * rot)
+            y = cy
+            z = cz + r * circ * math.sin(2*math.pi * rot)
 
-            points.append([x, y, z])
-            #print 'rotation: %d\tcircle%d'%(rotation, circle)
-    return points
+            base_points.append([x, y, z])
+
+            y = cy + h * (1 - circ)
+
+            lat_points.append([x, y, z])
+
+    return (base_points, lat_points)
+    
+
+'''
+ (t, u+1)--(t+1, u+1)      ^
+    |     /   |            |
+    |   /     |            y   x - >
+ (t, u )----(t+1, u )
+'''
+# func takes two float arguments t and u that range from 0 to 1 (inclusive) and returns a list [x, y, z]
+def add_parametric( edges, func, step):
+    for t_int in range(0, step):
+        t1 = t_int/float(step)
+        t2 = (t_int + 1)/float(step)
+        
+        for u_int in range(0, step):
+            u1 = u_int/float(step)
+            u2 = (u_int + 1)/float(step)
+            
+            args1 = [edges] + func(t1, u1) + func(t2, u1) + func(t2, u2)
+            args2 = [edges] + func(t1, u1) + func(t2, u2) + func(t1, u2)
+            
+            add_polygon(*args1)
+            add_polygon(*args2)
+            
+
+def add_sphere( edges, cx, cy, cz, r, step):
+    def parametric(t, u):
+        x = r * math.cos(math.pi * t) + cx
+        y = r * math.sin(math.pi * t) * math.cos(2*math.pi * u) + cy
+        z = r * math.sin(math.pi * t) * math.sin(2*math.pi * u) + cz
+        
+        return [x, y, z]
+
+    add_parametric( edges, parametric, step )
+
 
 def add_torus( edges, cx, cy, cz, r0, r1, step ):
-    points = generate_torus(cx, cy, cz, r0, r1, step)
-    lat_start = 0
-    lat_stop = step
-    longt_start = 0
-    longt_stop = step
+    def parametric(t, u):
+        x = math.cos(2*math.pi * t) * (r0 * math.cos(2*math.pi * u) + r1) + cx;
+        y = r0 * math.sin(2*math.pi * u) + cy;
+        z = -1*math.sin(2*math.pi * t) * (r0 * math.cos(2*math.pi * u) + r1) + cz;
 
-    for lat in range(lat_start, lat_stop):
-        for longt in range(longt_start, longt_stop):
+        return [x, y, z]
 
-            p0 = lat * step + longt;
-            if (longt == (step - 1)):
-                p1 = p0 - longt;
-            else:
-                p1 = p0 + 1;
-            p2 = (p1 + step) % (step * step);
-            p3 = (p0 + step) % (step * step);
+    add_parametric( edges, parametric, step )
 
-            add_polygon(edges,
-                        points[p0][0],
-                        points[p0][1],
-                        points[p0][2],
-                        points[p3][0],
-                        points[p3][1],
-                        points[p3][2],
-                        points[p2][0],
-                        points[p2][1],
-                        points[p2][2] )
-            add_polygon(edges,
-                        points[p0][0],
-                        points[p0][1],
-                        points[p0][2],
-                        points[p2][0],
-                        points[p2][1],
-                        points[p2][2],
-                        points[p1][0],
-                        points[p1][1],
-                        points[p1][2] )
-
-def generate_torus( cx, cy, cz, r0, r1, step ):
-    points = []
-    rot_start = 0
-    rot_stop = step
-    circ_start = 0
-    circ_stop = step
-
-    for rotation in range(rot_start, rot_stop):
-        rot = rotation/float(step)
-        for circle in range(circ_start, circ_stop):
-            circ = circle/float(step)
-
-            x = math.cos(2*math.pi * rot) * (r0 * math.cos(2*math.pi * circ) + r1) + cx;
-            y = r0 * math.sin(2*math.pi * circ) + cy;
-            z = -1*math.sin(2*math.pi * rot) * (r0 * math.cos(2*math.pi * circ) + r1) + cz;
-
-            points.append([x, y, z])
-    return points
 
 def add_circle( points, cx, cy, cz, r, step ):
     x0 = r + cx
