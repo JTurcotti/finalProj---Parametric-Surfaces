@@ -183,7 +183,7 @@ def add_starburst( edges, cx, cy, cz, r, a, d, step):
         
         return [x, y, z]
 
-    add_parametric( edges, parametric, step * 10)
+    add_parametric( edges, parametric, step * 7)
 
 
 
