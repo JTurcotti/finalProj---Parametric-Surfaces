@@ -17,6 +17,7 @@ tokens = (
     "BOX",
     "CONE",
     "COIL",
+    "STARBURST",
     "LINE", 
     "MESH", 
     "TEXTURE", 
@@ -58,6 +59,7 @@ reserved = {
     "box" : "BOX",
     "cone" : "CONE",
     "coil" : "COIL",
+    "starburst" : "STARBURST",
     "line" : "LINE",
     "mesh" : "MESH",
     "texture" : "TEXTURE",
@@ -174,6 +176,11 @@ def p_command_cone(p):
 def p_command_coil(p):
     """command : COIL NUMBER NUMBER NUMBER NUMBER NUMBER NUMBER NUMBER"""
     cmd = {'op' : p[1], 'constants' : None, 'cs' : None, 'args' : p[2:9]}
+    commands.append(cmd)
+
+def p_command_starburst(p):
+    """command : STARBURST NUMBER NUMBER NUMBER NUMBER NUMBER NUMBER"""
+    cmd = {'op' : p[1], 'constants' : None, 'cs' : None, 'args' : p[2:8]}
     commands.append(cmd)
 
 def p_command_sphere(p):

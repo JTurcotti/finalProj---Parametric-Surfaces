@@ -55,9 +55,15 @@ sphere [constants] x y z r [coord_system]
 torus [constants] x y z r0 r1  [coord_system]
 
 cone x y z r h
+- x y z = center of base
 
 coil x y z r0 r1 h n
-			- n = number of rotations
+- x y z = middle of bottom
+- n = number of rotations
+
+starburst x y z r0 r1 a d
+- a = amplitude of bursts
+- d = density of bursts
 
 box [constants] x0 y0 z0 h w d [coord_system]
 			- x0 y0 z0 = one corner of the box

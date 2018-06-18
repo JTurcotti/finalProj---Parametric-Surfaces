@@ -175,6 +175,17 @@ def add_sphere( edges, cx, cy, cz, r, step):
 
     add_parametric( edges, parametric, step )
 
+def add_starburst( edges, cx, cy, cz, r, a, d, step):
+    def parametric(t, u):
+        x = (r + a * (math.sin(t * 2 * math.pi * d) + math.sin(u * 2 * math.pi * d))) * math.cos(math.pi * t) + cx
+        y = (r + a * (math.sin(t * 2 * math.pi * d) + math.sin(u * 2 * math.pi * d))) * math.sin(math.pi * t) * math.cos(2*math.pi * u) + cy
+        z = (r + a * (math.sin(t * 2 * math.pi * d) + math.sin(u * 2 * math.pi * d))) * math.sin(math.pi * t) * math.sin(2*math.pi * u) + cz
+        
+        return [x, y, z]
+
+    add_parametric( edges, parametric, step * 10)
+
+
 
 def add_torus( edges, cx, cy, cz, r0, r1, step ):
     def parametric(t, u):
@@ -184,7 +195,7 @@ def add_torus( edges, cx, cy, cz, r0, r1, step ):
 
         return [x, y, z]
 
-    add_parametric( edges, parametric, step )
+    add_parametric( edges, parametric, step)
 
 def add_cone( edges, cx, cy, cz, r, h, step ):
     def para_base(t, u):
