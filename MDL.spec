@@ -61,7 +61,7 @@ coil x y z r0 r1 h n
 - x y z = middle of bottom
 - n = number of rotations
 
-starburst x y z r0 r1 a d
+starburst x y z r a d
 - a = amplitude of bursts
 - d = density of bursts
 
