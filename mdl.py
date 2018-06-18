@@ -14,7 +14,8 @@ tokens = (
     "AMBIENT",
     "TORUS",
     "SPHERE",
-    "BOX", 
+    "BOX",
+    "CONE",
     "LINE", 
     "MESH", 
     "TEXTURE", 
@@ -54,6 +55,7 @@ reserved = {
     "torus" : "TORUS",
     "sphere" : "SPHERE",
     "box" : "BOX",
+    "cone" : "CONE",
     "line" : "LINE",
     "mesh" : "MESH",
     "texture" : "TEXTURE",
@@ -162,6 +164,11 @@ def p_command_show(p):
     """command : DISPLAY"""
     commands.append({'op' : p[1], 'args' : None})
 
+def p_command_cone(p):
+    """command : CONE NUMBER NUMBER NUMBER NUMBER NUMBER"""
+    cmd = {'op' : p[1], 'constants' : None, 'cs' : None, 'args' : p[2:7]}
+    commands.append(cmd)
+    
 def p_command_sphere(p):
     """command : SPHERE NUMBER NUMBER NUMBER NUMBER
                | SPHERE SYMBOL NUMBER NUMBER NUMBER NUMBER
